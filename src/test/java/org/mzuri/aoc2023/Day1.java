@@ -9,10 +9,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.IntStream;
 
 @Slf4j
@@ -72,7 +69,7 @@ public class Day1 {
         for (String line : calibrations) {
 
             //pos, value
-            Map<Integer, Integer> numbersInLine = new HashMap<>();
+            TreeMap<Integer, Integer> numbersInLine = new TreeMap<>();
 
             //check for spelt out numbers
             for (String number : numbers.keySet()) {
@@ -91,14 +88,10 @@ public class Day1 {
                 }
             }
 
-            List<Integer> numbersFoundInOrder = numbersInLine.keySet().stream().sorted().toList();
+            Integer firstNumber = numbersInLine.firstEntry().getValue();
+            Integer lastNumber = numbersInLine.lastEntry().getValue();
 
-            String first = numbersInLine.get(numbersFoundInOrder.get(0)).toString();
-            Integer lastNumber = numbersInLine.get(numbersFoundInOrder.get(numbersFoundInOrder.size() - 1));
-            String last = lastNumber == null ? first : lastNumber.toString();
-
-
-            String toAdd = first + last;
+            String toAdd = "" + firstNumber + lastNumber;
             total += Integer.parseInt(toAdd);
 
             log.info("line {} toAdd : {} with total : {}", line, toAdd, total);
