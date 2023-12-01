@@ -62,21 +62,23 @@ public class Day1 {
                 "eight", 8,
                 "nine", 9);
 
-
-
         int total = 0;
 
         for (String line : calibrations) {
-
             //pos, value
             TreeMap<Integer, Integer> numbersInLine = new TreeMap<>();
 
             //check for spelt out numbers
             for (String number : numbers.keySet()) {
-                int pos = line.lastIndexOf(number);
-                if (pos != -1) {
+                int firstIndexOf = line.indexOf(number);
+                int lastIndexOf = line.lastIndexOf(number, firstIndexOf);
+                if (firstIndexOf != -1) {
                     //got one
-                    numbersInLine.put(pos, numbers.get(number));
+                    numbersInLine.put(firstIndexOf, numbers.get(number));
+                }
+                if (lastIndexOf != -1 && lastIndexOf != firstIndexOf) {
+                    //got one
+                    numbersInLine.put(lastIndexOf, numbers.get(number));
                 }
             }
 
@@ -84,6 +86,7 @@ public class Day1 {
             for (int i = 0; i < line.length(); i++) {
                 char c = line.charAt(i);
                 if (Character.isDigit(c)) {
+                    //got one
                     numbersInLine.put(i, Character.getNumericValue(c));
                 }
             }
@@ -94,7 +97,7 @@ public class Day1 {
             String toAdd = "" + firstNumber + lastNumber;
             total += Integer.parseInt(toAdd);
 
-            log.info("line {} toAdd : {} with total : {}", line, toAdd, total);
+            log.debug("line {} toAdd : {} with total : {}", line, toAdd, total);
         }
 
         log.info("Finished with {}", total);
@@ -102,7 +105,6 @@ public class Day1 {
 
     private static List<String> readCalibrations() throws URISyntaxException, IOException {
         URI uri = Day1.class.getResource("../../../day1/input.txt").toURI();
-        List<String> calibrations = Files.readAllLines(Path.of(uri));
-        return calibrations;
+        return Files.readAllLines(Path.of(uri));
     }
 }
