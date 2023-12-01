@@ -38,7 +38,7 @@ public class Day1 {
             String toAdd = first.toString() + last.toString();
             total += Integer.parseInt(toAdd);
 
-            log.info("line {} with toAdd : {}  with total : {}", line, toAdd, total);
+            log.debug("line {} with toAdd : {}  with total : {}", line, toAdd, total);
         }
         log.info("Finished with {}", total);
     }
