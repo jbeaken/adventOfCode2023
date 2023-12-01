@@ -54,7 +54,16 @@ public class Day1 {
     @Test
     void test2() throws IOException, URISyntaxException {
 
-        Map<String, Integer> numbers = Map.of("one", 1, "two", 2, "three", 3, "four", 4, "five", 5, "six", 6, "seven", 7, "eight", 8, "nine", 9);
+        Map<String, Integer> numbers = Map.of(
+                "one", 1,
+                "two", 2,
+                "three", 3,
+                "four", 4,
+                "five", 5,
+                "six", 6,
+                "seven", 7,
+                "eight", 8,
+                "nine", 9);
         URI uri = Day1.class.getResource("../../../day1/input.txt").toURI();
         List<String> calibrations = Files.readAllLines(Path.of(uri));
 
@@ -93,9 +102,8 @@ public class Day1 {
             total += Integer.parseInt(toAdd);
 
             log.info("line {} toAdd : {} with total : {}", line, toAdd, total);
-
-
         }
+
         log.info("Finished with {}", total);
     }
 }
