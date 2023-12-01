@@ -10,9 +10,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
-@Slf4j
+@Slf4j(topic = "Day1")
 public class Day1 {
-
 
     @Test
     void test1() throws IOException, URISyntaxException {
@@ -40,8 +39,6 @@ public class Day1 {
             total += Integer.parseInt(toAdd);
 
             log.info("line {} with toAdd : {}  with total : {}", line, toAdd, total);
-
-
         }
         log.info("Finished with {}", total);
     }
@@ -103,7 +100,7 @@ public class Day1 {
         log.info("Finished with {}", total);
     }
 
-    private static List<String> readCalibrations() throws URISyntaxException, IOException {
+    private List<String> readCalibrations() throws URISyntaxException, IOException {
         URI uri = Day1.class.getResource("../../../day1/input.txt").toURI();
         return Files.readAllLines(Path.of(uri));
     }
