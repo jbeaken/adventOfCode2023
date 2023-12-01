@@ -92,7 +92,7 @@ public class Day1 {
             String toAdd = first + last;
             total += Integer.parseInt(toAdd);
 
-            log.info("line {} with first : {}  last : {} toAdd : {} with total : {}", line, first, last, toAdd, total);
+            log.info("line {} toAdd : {} with total : {}", line, toAdd, total);
 
 
         }
