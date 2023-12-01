@@ -4,13 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.stream.IntStream;
 
 @Slf4j
 public class Day1 {
@@ -18,10 +16,10 @@ public class Day1 {
 
     @Test
     void test1() throws IOException, URISyntaxException {
-        URI uri = Day1.class.getResource("../../../day1/input.txt").toURI();
-        List<String> calibrations = Files.readAllLines(Path.of(uri));
+        List<String> calibrations = readCalibrations();
 
-        Integer total = 0;
+        int total = 0;
+
         for (String line : calibrations) {
             Character first = null;
             Character last = null;
@@ -39,7 +37,7 @@ public class Day1 {
                 last = first;
             }
             String toAdd = first.toString() + last.toString();
-            total += Integer.valueOf(toAdd);
+            total += Integer.parseInt(toAdd);
 
             log.info("line {} with toAdd : {}  with total : {}", line, toAdd, total);
 
@@ -51,6 +49,8 @@ public class Day1 {
     @Test
     void test2() throws IOException, URISyntaxException {
 
+        List<String> calibrations = readCalibrations();
+
         Map<String, Integer> numbers = Map.of(
                 "one", 1,
                 "two", 2,
@@ -61,8 +61,8 @@ public class Day1 {
                 "seven", 7,
                 "eight", 8,
                 "nine", 9);
-        URI uri = Day1.class.getResource("../../../day1/input.txt").toURI();
-        List<String> calibrations = Files.readAllLines(Path.of(uri));
+
+
 
         int total = 0;
 
@@ -98,5 +98,11 @@ public class Day1 {
         }
 
         log.info("Finished with {}", total);
+    }
+
+    private static List<String> readCalibrations() throws URISyntaxException, IOException {
+        URI uri = Day1.class.getResource("../../../day1/input.txt").toURI();
+        List<String> calibrations = Files.readAllLines(Path.of(uri));
+        return calibrations;
     }
 }
