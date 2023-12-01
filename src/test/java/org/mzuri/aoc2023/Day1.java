@@ -1,4 +1,4 @@
-package org.mzuri.aoc2023.day1;
+package org.mzuri.aoc2023;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,8 @@ public class Day1 {
 
     @Test
     void test() throws IOException, URISyntaxException {
-        URI uri = Day1.class.getResource("day1Input.txt").toURI();
+        URI uri = Day1.class.getResource("day1/day1Input.txt").toURI();
         List<String> strings = Files.readAllLines(Path.of(uri));
+        log.info("input {}", strings);
     }
 }
