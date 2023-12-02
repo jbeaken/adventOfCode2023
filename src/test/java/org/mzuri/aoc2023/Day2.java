@@ -69,6 +69,7 @@ public class Day2 extends AdventOfCode2023Test {
         for (String line : lines) {
             Game game = getGameFromLine(line);
             if (game.isPossible) {
+                log.info(game.id.toString());
                 result += game.id;
             }
         }

@@ -12,7 +12,7 @@ public class Day1 extends AdventOfCode2023Test{
 
     @Test
     void test1() throws IOException, URISyntaxException {
-        List<String> calibrations = loadInput("day2.txt");
+        List<String> calibrations = loadInput("day1.txt");
 
         int total = 0;
 
@@ -43,7 +43,7 @@ public class Day1 extends AdventOfCode2023Test{
     @Test
     void test2() throws IOException, URISyntaxException {
 
-        List<String> calibrations = loadInput("day2.txt");
+        List<String> calibrations = loadInput("day1.txt");
 
         Map<String, Integer> numbersMap = Map.of(
                 "one", 1,
