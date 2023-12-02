@@ -4,18 +4,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 
 @Slf4j(topic = "Day1")
-public class Day1 {
+public class Day1 extends AdventOfCode2023Test{
 
     @Test
     void test1() throws IOException, URISyntaxException {
-        List<String> calibrations = readCalibrations();
+        List<String> calibrations = loadInput("day2.txt");
 
         int total = 0;
 
@@ -46,7 +43,7 @@ public class Day1 {
     @Test
     void test2() throws IOException, URISyntaxException {
 
-        List<String> calibrations = readCalibrations();
+        List<String> calibrations = loadInput("day2.txt");
 
         Map<String, Integer> numbersMap = Map.of(
                 "one", 1,
@@ -100,8 +97,4 @@ public class Day1 {
         log.info("Finished with {}", total);
     }
 
-    private List<String> readCalibrations() throws URISyntaxException, IOException {
-        URI uri = Day1.class.getResource("../../../input/day1.txt").toURI();
-        return Files.readAllLines(Path.of(uri));
-    }
 }

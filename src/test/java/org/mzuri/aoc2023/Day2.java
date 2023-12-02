@@ -34,18 +34,43 @@ import java.util.TreeMap;
 @Slf4j(topic = "Day2")
 public class Day2 extends AdventOfCode2023Test {
 
+    record Game(Long id, Integer mostRedsShown,Integer mostGreensShown,Integer mostBlueShown) {};
+
     @Test
     void test1() throws IOException, URISyntaxException {
         List<String> lines = loadInput("day2.txt");
-
-        record Game(Long id, Integer mostRedsShown,Integer mostGreensShown,Integer mostBlueShown) {};
 
         for(String line : lines) {
             Game game = getGameFromLine(line);
         }
     }
 
+//Game 76: 14 green, 2 red, 16 blue; 2 blue, 1 red, 7 green; 14 green, 9 blue, 8 red
     private Game getGameFromLine(String line) {
+        //get id, between first space and :
+        int startId = line.indexOf(" ");
+        int endId = line.indexOf(":");
+
+        Integer id = Integer.valueOf(line.substring(startId + 1, endId));
+        int endPos = endId ;
+
+        //cycle through turns of game
+        do {
+            int currentPos = endPos + 1;
+            endPos = line.indexOf(";", currentPos);
+            if(endPos == -1) {
+                endPos = line.length();
+            }
+            if(currentPos > line.length() - 1) break;
+            String turn = line.substring(currentPos, endPos);
+
+            log.info("game {} : {}", id, turn);
+            //get positions
+            int green = turn.indexOf("green");
+            int red = turn.indexOf("green");
+            int blue = turn.indexOf("green");
+        } while (true);
+
 
         return null;
     }
