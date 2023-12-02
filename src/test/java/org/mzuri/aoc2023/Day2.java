@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +40,25 @@ public class Day2 extends AdventOfCode2023Test {
             'b', new ColourConfig(6, 14));
 
     @Test
-    void test1() throws IOException, URISyntaxException {
+    void test_part2() throws IOException, URISyntaxException {
+        List<String> lines = loadInput("day2.txt");
+
+        int result = 0;
+
+        for(String line : lines) {
+            Map<Character, Integer> minimumCubeGameFromLine = getMinimumCubeGameFromLine(line);
+
+            int cube = minimumCubeGameFromLine.get('g') * minimumCubeGameFromLine.get('r') * minimumCubeGameFromLine.get('b');
+            result += cube;
+        }
+
+        log.info("Result {}", result);
+    }
+
+
+
+    @Test
+    void test_part1() throws IOException, URISyntaxException {
         List<String> lines = loadInput("day2.txt");
 
         int result = 0;
@@ -54,13 +73,16 @@ public class Day2 extends AdventOfCode2023Test {
         log.info("Result {}", result);
     }
 
-    private Game getGameFromLine(String line) {
-        //get id, between first space and :
-        int startId = line.indexOf(" ");
-        int endId = line.indexOf(":");
-        Integer id = Integer.valueOf(line.substring(startId + 1, endId));
+    private Map<Character, Integer> getMinimumCubeGameFromLine(String line) {
+        int start = line.indexOf(":");
 
-        String turns = line.substring(endId + 2);
+        String turns = line.substring(start + 2);
+
+        //build colourAndMinimumAmountOfCubesMap
+//        colourMap.keySet().stream().colourAndMinimumAmountOfCubesMap   //TODO
+        Map<Character, Integer> immutableMap = Map.of('r', 0, 'g', 0, 'b', 0);
+        Map<Character, Integer> colourAndMinimumAmountOfCubesMap = new HashMap<>(immutableMap);
+
         for (int i = 0; i < turns.length(); i++) {
             char c = turns.charAt(i);
 
@@ -68,11 +90,48 @@ public class Day2 extends AdventOfCode2023Test {
 
                 int amountOfCubes;
 
-                if (i > 2 && Character.isDigit(turns.charAt(i - 3))) {
-                    amountOfCubes = Integer.parseInt(turns.substring(i - 3, i - 1));
-                } else {
-                    amountOfCubes = Integer.parseInt(turns.substring(i - 2, i - 1));
+                amountOfCubes = getAmountOfCubes(i, turns);
+
+                Integer minAmountOfCubes = colourAndMinimumAmountOfCubesMap.get(c);
+                if(amountOfCubes > minAmountOfCubes) {
+                    colourAndMinimumAmountOfCubesMap.put(c, amountOfCubes);
                 }
+
+
+                ColourConfig colourConfig = colourMap.get(c);
+                i += colourConfig.skipLength;
+            }
+        }
+
+        return colourAndMinimumAmountOfCubesMap;
+    }
+
+    private static int getAmountOfCubes(int i, String turns) {
+        int amountOfCubes;
+        if (i > 2 && Character.isDigit(turns.charAt(i - 3))) {
+            amountOfCubes = Integer.parseInt(turns.substring(i - 3, i - 1));
+        } else {
+            amountOfCubes = Integer.parseInt(turns.substring(i - 2, i - 1));
+        }
+        return amountOfCubes;
+    }
+
+    private Game getGameFromLine(String line) {
+        //get id, between first space and :
+        int startId = line.indexOf(" ");
+        int endId = line.indexOf(":");
+        Integer id = Integer.valueOf(line.substring(startId + 1, endId));
+
+        String turns = line.substring(endId + 2);
+
+        for (int i = 0; i < turns.length(); i++) {
+            char c = turns.charAt(i);
+
+            if(colourMap.containsKey(c)) {
+
+                int amountOfCubes;
+
+                amountOfCubes = getAmountOfCubes(i, turns);
 
                 ColourConfig colourConfig = colourMap.get(c);
 
