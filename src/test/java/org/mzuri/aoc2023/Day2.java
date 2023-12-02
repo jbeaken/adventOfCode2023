@@ -129,9 +129,7 @@ public class Day2 extends AdventOfCode2023Test {
 
             if(colourMap.containsKey(c)) {
 
-                int amountOfCubes;
-
-                amountOfCubes = getAmountOfCubes(i, turns);
+                int amountOfCubes = getAmountOfCubes(i, turns);
 
                 ColourConfig colourConfig = colourMap.get(c);
 
