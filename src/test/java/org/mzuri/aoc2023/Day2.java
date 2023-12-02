@@ -4,13 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * You play several games and record the information from each game (your puzzle input). Each game is listed with its ID number (like the 11 in Game 11: ...) followed by a semicolon-separated list of subsets of cubes that were revealed from the bag (like 3 red, 5 green, 4 blue).
@@ -35,7 +31,7 @@ import java.util.TreeMap;
 public class Day2 extends AdventOfCode2023Test {
 
     record Game(Integer id, Boolean isPossible) {}
-    record ColourConfig(Integer skipLength, Integer maxAllowed) {}
+    record ColourConfig(Integer skipLength, Integer maxCubesAllowed) {}
 
     Map<Character, ColourConfig> colourMap = Map.of(
             'r', new ColourConfig(5, 12),
@@ -69,22 +65,22 @@ public class Day2 extends AdventOfCode2023Test {
             char c = turns.charAt(i);
 
             if(colourMap.containsKey(c)) {
-                //got one,
-                StringBuffer numberHolder = new StringBuffer(2);
+
+                int amountOfCubes;
 
                 if (i > 2 && Character.isDigit(turns.charAt(i - 3))) {
-                    numberHolder.append(turns.charAt(i - 3));
+                    amountOfCubes = Integer.parseInt(turns.substring(i - 3, i - 1));
+                } else {
+                    amountOfCubes = Integer.parseInt(turns.substring(i - 2, i - 1));
                 }
-                numberHolder.append(turns.charAt(i - 2));
-
-                int amount = Integer.parseInt(numberHolder.toString());
 
                 ColourConfig colourConfig = colourMap.get(c);
-                i += colourConfig.skipLength;
 
-                if(amount > colourConfig.maxAllowed) {
+                if(amountOfCubes > colourConfig.maxCubesAllowed) {
                     return new Game(id, false);
                 }
+
+                i += colourConfig.skipLength;
 
             }
         }
