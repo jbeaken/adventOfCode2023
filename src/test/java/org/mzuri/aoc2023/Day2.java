@@ -34,11 +34,13 @@ import java.util.TreeMap;
 @Slf4j(topic = "Day2")
 public class Day2 extends AdventOfCode2023Test {
 
-    private final Integer maxRedsPossible = 12;
-    private final Integer maxGreensPossible = 13;
-    private final Integer maxBluePossible = 14;
+    record Game(Integer id, Boolean isPossible) {}
+    record ColourConfig(Integer skipLength, Integer maxAllowed) {}
 
-    record Game(Integer id, Integer mostRedsShown,Integer mostGreensShown,Integer mostBlueShown) {};
+    Map<Character, ColourConfig> colourMap = Map.of(
+            'r', new ColourConfig(5, 12),
+            'g', new ColourConfig(7, 13),
+            'b', new ColourConfig(6, 14));
 
     @Test
     void test1() throws IOException, URISyntaxException {
@@ -48,9 +50,7 @@ public class Day2 extends AdventOfCode2023Test {
 
         for(String line : lines) {
             Game game = getGameFromLine(line);
-            if(game.mostBlueShown > maxBluePossible || game.mostGreensShown > maxGreensPossible || game.mostRedsShown > maxRedsPossible) {
-                //impossible
-            } else {
+            if(game.isPossible) {
                 result += game.id;
             }
         }
@@ -58,22 +58,17 @@ public class Day2 extends AdventOfCode2023Test {
         log.info("Result {}", result);
     }
 
-//Game 76: 14 green, 2 red, 16 blue; 2 blue, 1 red, 7 green; 14 green, 9 blue, 8 red
     private Game getGameFromLine(String line) {
         //get id, between first space and :
         int startId = line.indexOf(" ");
         int endId = line.indexOf(":");
         Integer id = Integer.valueOf(line.substring(startId + 1, endId));
 
-        int maxGreen = 0;
-        int maxRed = 0;
-        int maxBlue = 0;
-
         String turns = line.substring(endId + 2);
         for (int i = 0; i < turns.length(); i++) {
             char c = turns.charAt(i);
 
-            if(c == 'g' || c == 'r' || c == 'b') {
+            if(colourMap.containsKey(c)) {
                 //got one,
                 StringBuffer numberHolder = new StringBuffer(2);
 
@@ -84,22 +79,17 @@ public class Day2 extends AdventOfCode2023Test {
 
                 int amount = Integer.parseInt(numberHolder.toString());
 
-                if(c == 'g') {
-                    if(amount > maxGreen) maxGreen = amount;
-                    i += 7;
+                ColourConfig colourConfig = colourMap.get(c);
+                i += colourConfig.skipLength;
+
+                if(amount > colourConfig.maxAllowed) {
+                    return new Game(id, false);
                 }
-                if(c == 'r') {
-                    if(amount > maxRed) maxRed = amount;
-                    i += 5;
-                }
-                if(c == 'b') {
-                    if(amount > maxBlue) maxBlue = amount;
-                    i += 6;
-                }
+
             }
         }
 
-        return new Game(id, maxRed, maxGreen, maxBlue);
+        return new Game(id, true);
     }
 
 }
