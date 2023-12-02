@@ -4,10 +4,9 @@ import kotlin.test.Test
 
 internal class Day2Test {
 
+    val colourMap = mapOf("red" to 12, "green" to 13, "blue" to 14)
+
     val idRegex = """Game (?<id>\d{1,3}):""".toRegex()
-    val redRegex = """(?<number>\d{1,2}) red""".toRegex()
-    val greenRegex = """(?<number>\d{1,2}) green""".toRegex()
-    val blueRegex = """(?<number>\d{1,2}) blue""".toRegex()
 
     @Test
     fun test1() {
@@ -28,28 +27,23 @@ internal class Day2Test {
             }
         }
         println("Added up possible game ids for $result")
+
+        assert(result == 2776)
     }
 
     private fun getIsPossible(line: String): Boolean {
-//red
-        var matchResults = redRegex.findAll(line)
-        val maxRedValue = matchResults.maxByOrNull{ it.groups["number"]?.value?.toInt() ?: 0 }?.groups?.get("number")?.value?.toInt()
-        if (maxRedValue != null) {
-            if(maxRedValue > 12) return false
-        }
 
-//green
-        matchResults = greenRegex.findAll(line)
-        val maxGreenValue = matchResults.maxByOrNull{ it.groups["number"]?.value?.toInt() ?: 0 }?.groups?.get("number")?.value?.toInt()
-        if (maxGreenValue != null) {
-            if(maxGreenValue > 13) return false
-        }
+        colourMap.forEach { entry ->
+            val regex : Regex = """(?<number>\d{1,2}) ${entry.key}""".toRegex()
+            val matchResults = regex.findAll(line)
 
-//blue
-        matchResults = blueRegex.findAll(line)
-        val maxBlueValue = matchResults.maxByOrNull{ it.groups["number"]?.value?.toInt() ?: 0 }?.groups?.get("number")?.value?.toInt()
-        if (maxBlueValue != null) {
-            if(maxBlueValue > 14) return false;
+            val maxValue = matchResults.maxByOrNull {
+                it.groups["number"]?.value?.toInt() ?: 0
+            }?.groups?.get("number")?.value?.toInt()
+
+            if (maxValue != null) {
+                if (maxValue > entry.value) return false
+            }
         }
 
         return true

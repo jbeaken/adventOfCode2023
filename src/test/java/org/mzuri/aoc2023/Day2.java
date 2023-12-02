@@ -1,6 +1,7 @@
 package org.mzuri.aoc2023;
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -10,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * You play several games and record the information from each game (your puzzle input). Each game is listed with its ID number (like the 11 in Game 11: ...) followed by a semicolon-separated list of subsets of cubes that were revealed from the bag (like 3 red, 5 green, 4 blue).
@@ -57,6 +60,8 @@ public class Day2 extends AdventOfCode2023Test {
         }
 
         log.info("Result {}", result);
+
+        assertEquals(result, 68638);
     }
 
 
@@ -75,6 +80,8 @@ public class Day2 extends AdventOfCode2023Test {
         }
 
         log.info("Result {}", result);
+
+        assertEquals(result, 2776);
     }
 
     private Map<Character, Integer> getMinimumCubeGameFromLine(String line) {
