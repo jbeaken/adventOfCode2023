@@ -19,7 +19,7 @@ abstract class AdventOfCode2023Test {
 
         log.info("Loading input from file {}", absoluteFilename);
 
-        URI uri = Day2.class.getResource(absoluteFilename).toURI();
+        URI uri = AdventOfCode2023Test.class.getResource(absoluteFilename).toURI();
         return Files.readAllLines(Path.of(uri));
     }
 }
