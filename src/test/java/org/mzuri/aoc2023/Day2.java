@@ -47,8 +47,7 @@ public class Day2 extends AdventOfCode2023Test {
 
         for(String line : lines) {
             Map<Character, Integer> minimumCubeGameFromLine = getMinimumCubeGameFromLine(line);
-
-            int cube = minimumCubeGameFromLine.get('g') * minimumCubeGameFromLine.get('r') * minimumCubeGameFromLine.get('b');
+            Integer cube = minimumCubeGameFromLine.values().stream().reduce(1, (a, b) -> a * b);
             result += cube;
         }
 
