@@ -1,6 +1,7 @@
 plugins {
     id("java")
     id("io.freefair.lombok") version "6.6"
+    kotlin("jvm") version "1.9.21"
 }
 
 group = "org.mzuri"
@@ -15,6 +16,8 @@ dependencies {
 
     testImplementation(platform("org.junit:junit-bom:5.9.1"))
     testImplementation("org.junit.jupiter:junit-jupiter")
+
+    testImplementation(kotlin("test"))
 }
 
 tasks.test {
