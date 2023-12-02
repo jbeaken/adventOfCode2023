@@ -34,15 +34,28 @@ import java.util.TreeMap;
 @Slf4j(topic = "Day2")
 public class Day2 extends AdventOfCode2023Test {
 
-    record Game(Long id, Integer mostRedsShown,Integer mostGreensShown,Integer mostBlueShown) {};
+    private final Integer maxRedsPossible = 12;
+    private final Integer maxGreensPossible = 13;
+    private final Integer maxBluePossible = 14;
+
+    record Game(Integer id, Integer mostRedsShown,Integer mostGreensShown,Integer mostBlueShown) {};
 
     @Test
     void test1() throws IOException, URISyntaxException {
         List<String> lines = loadInput("day2.txt");
 
+        int result = 0;
+
         for(String line : lines) {
             Game game = getGameFromLine(line);
+            if(game.mostBlueShown > maxBluePossible || game.mostGreensShown > maxGreensPossible || game.mostRedsShown > maxRedsPossible) {
+                //impossible
+            } else {
+                result += game.id;
+            }
         }
+
+        log.info("Result {}", result);
     }
 
 //Game 76: 14 green, 2 red, 16 blue; 2 blue, 1 red, 7 green; 14 green, 9 blue, 8 red
@@ -50,29 +63,43 @@ public class Day2 extends AdventOfCode2023Test {
         //get id, between first space and :
         int startId = line.indexOf(" ");
         int endId = line.indexOf(":");
-
         Integer id = Integer.valueOf(line.substring(startId + 1, endId));
-        int endPos = endId ;
 
-        //cycle through turns of game
-        do {
-            int currentPos = endPos + 1;
-            endPos = line.indexOf(";", currentPos);
-            if(endPos == -1) {
-                endPos = line.length();
+        int maxGreen = 0;
+        int maxRed = 0;
+        int maxBlue = 0;
+
+        String turns = line.substring(endId + 2);
+        for (int i = 0; i < turns.length(); i++) {
+            char c = turns.charAt(i);
+
+            if(c == 'g' || c == 'r' || c == 'b') {
+                //got one,
+                StringBuffer numberHolder = new StringBuffer(2);
+
+                if (i > 2 && Character.isDigit(turns.charAt(i - 3))) {
+                    numberHolder.append(turns.charAt(i - 3));
+                }
+                numberHolder.append(turns.charAt(i - 2));
+
+                int amount = Integer.parseInt(numberHolder.toString());
+
+                if(c == 'g') {
+                    if(amount > maxGreen) maxGreen = amount;
+                    i += 7;
+                }
+                if(c == 'r') {
+                    if(amount > maxRed) maxRed = amount;
+                    i += 5;
+                }
+                if(c == 'b') {
+                    if(amount > maxBlue) maxBlue = amount;
+                    i += 6;
+                }
             }
-            if(currentPos > line.length() - 1) break;
-            String turn = line.substring(currentPos, endPos);
+        }
 
-            log.info("game {} : {}", id, turn);
-            //get positions
-            int green = turn.indexOf("green");
-            int red = turn.indexOf("green");
-            int blue = turn.indexOf("green");
-        } while (true);
-
-
-        return null;
+        return new Game(id, maxRed, maxGreen, maxBlue);
     }
 
 }
