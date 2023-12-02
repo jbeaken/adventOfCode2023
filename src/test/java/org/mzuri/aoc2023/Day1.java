@@ -48,7 +48,7 @@ public class Day1 {
 
         List<String> calibrations = readCalibrations();
 
-        Map<String, Integer> numbers = Map.of(
+        Map<String, Integer> numbersMap = Map.of(
                 "one", 1,
                 "two", 2,
                 "three", 3,
@@ -66,16 +66,16 @@ public class Day1 {
             TreeMap<Integer, Integer> numbersInLine = new TreeMap<>();
 
             //check for spelt out numbers
-            for (String number : numbers.keySet()) {
-                int firstIndexOf = line.indexOf(number);
-                int lastIndexOf = line.lastIndexOf(number, firstIndexOf);
+            for (String numberAsText : numbersMap.keySet()) {
+                int firstIndexOf = line.indexOf(numberAsText);
+                int lastIndexOf = line.lastIndexOf(numberAsText, firstIndexOf);
                 if (firstIndexOf != -1) {
                     //got one
-                    numbersInLine.put(firstIndexOf, numbers.get(number));
+                    numbersInLine.put(firstIndexOf, numbersMap.get(numberAsText));
                 }
                 if (lastIndexOf != -1 && lastIndexOf != firstIndexOf) {
                     //got one
-                    numbersInLine.put(lastIndexOf, numbers.get(number));
+                    numbersInLine.put(lastIndexOf, numbersMap.get(numberAsText));
                 }
             }
 
