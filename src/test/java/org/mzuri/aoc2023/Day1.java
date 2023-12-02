@@ -101,7 +101,7 @@ public class Day1 {
     }
 
     private List<String> readCalibrations() throws URISyntaxException, IOException {
-        URI uri = Day1.class.getResource("../../../input/input.txt").toURI();
+        URI uri = Day1.class.getResource("../../../input/day1.txt").toURI();
         return Files.readAllLines(Path.of(uri));
     }
 }
