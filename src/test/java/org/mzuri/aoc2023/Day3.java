@@ -61,54 +61,45 @@ public class Day3 extends AdventOfCode2023Test {
 
         }
 
-        assertEquals(404915, result);
+        assertEquals(535235, result);
     }
 
     private boolean isNextToSymbol(List<String> lines, int pos, int linenumber, String value) {
         String currentLine = lines.get(linenumber);
+
         //next to it?
         if(pos > 1 && isSymbol( currentLine.charAt(pos - 1) )) return true;
 
         //in front?
         if(pos < currentLine.length() - value.length() && isSymbol(currentLine.charAt(pos + value.length()))) return true;
 
-
+        //below
         if(linenumber > 1) {
-
-
-            //check diagonals
-            String lineAbove = lines.get(linenumber - 1);
-            if(pos > 1) {
-                if(isSymbol(lineAbove.charAt(pos - 1))) return true;
-            }
-            if(pos < currentLine.length() - value.length()) {
-                if(isSymbol(lineAbove.charAt(pos + value.length()))) return true;
-            }
-
-            //and above
-            for(int i = pos; i < pos + value.length(); i++) {
-                if(isSymbol(lineAbove.charAt(i))) return true;
-            }
+            if (checkLine(pos, value,lines.get(linenumber - 1))) return true;
         }
 
+        //above
         if(linenumber < lines.size() -1) {
-
-            String lineBelow = lines.get(linenumber + 1);
-
-            //check diagonals
-            if(pos > 1) {
-                if(isSymbol(lineBelow.charAt(pos - 1))) return true;
-            }
-            if(pos < currentLine.length() - value.length()) {
-                if(isSymbol(lineBelow.charAt(pos + value.length()))) return true;
-            }
-
-            //and below
-            for(int i = pos; i < pos + value.length(); i++) {
-                if(isSymbol(lineBelow.charAt(i))) return true;
-            }
+            if (checkLine(pos, value, lines.get(linenumber + 1))) return true;
         }
 
+        return false;
+    }
+
+    private boolean checkLine(int pos, String value, String line) {
+        //check diagonals
+
+        if(pos > 1) {
+            if(isSymbol(line.charAt(pos - 1))) return true;
+        }
+        if(pos < line.length() - value.length()) {
+            if(isSymbol(line.charAt(pos + value.length()))) return true;
+        }
+
+        //and above
+        for(int i = pos; i < pos + value.length(); i++) {
+            if(isSymbol(line.charAt(i))) return true;
+        }
         return false;
     }
 
