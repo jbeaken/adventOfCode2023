@@ -24,8 +24,6 @@ public class Day3Part1 extends AdventOfCode2023Test {
 
     List<String> lines;
 
-
-
     @BeforeEach
     void beforeEach() throws URISyntaxException, IOException {
         lines = loadInput("day3.txt");
@@ -35,7 +33,6 @@ public class Day3Part1 extends AdventOfCode2023Test {
 
     @Test
     void test() {
-        Pattern pattern = Pattern.compile("\\d{1,3}");
         int result = 0;
 
         for (int i = 0; i < lines.size(); i++) {
@@ -46,7 +43,6 @@ public class Day3Part1 extends AdventOfCode2023Test {
 
             for(int j = 0; j < lineAsChars.length; j++ ) {
                 char c = line.charAt(j);
-
 
                 if (Character.isDigit(c)) {
                     //find full digit

@@ -1,10 +1,12 @@
 package org.mzuri.aoc2023;
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,90 +19,119 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @Slf4j(topic = "Day3")
 public class Day3Part2 extends AdventOfCode2023Test {
 
-    @Test
-    void test() throws IOException, URISyntaxException {
-        List<String> lines = loadInput("day3.txt");
+    List<String> lines;
 
+    @BeforeEach
+    void beforeEach() throws URISyntaxException, IOException {
+        lines = loadInput("day3.txt");
+    }
+
+    record NumberInInput(Integer lineNumber, Integer position, Integer value) {
+    }
+
+    @Test
+    void test()  {
         int result = 0;
+
+        List<NumberInInput> numberInInputs = new ArrayList<>();
 
         for (int i = 0; i < lines.size(); i++) {
             String line = lines.get(i);
-            log.info(line);
+//            log.info(line);
+//            log.info("" + i);
 
             char[] lineAsChars = line.toCharArray();
 
-            for(int j = 0; j < lineAsChars.length; j++ ) {
+            for (int j = 0; j < lineAsChars.length; j++) {
                 char c = line.charAt(j);
-                int value = 0;
 
                 if (Character.isDigit(c)) {
                     //find full digit
+                    String value;
                     if (Character.isDigit(line.charAt(j + 1))) {
                         if (j < lineAsChars.length - 2 && Character.isDigit(line.charAt(j + 2))) {
-                            value = Integer.parseInt(line.substring(j, j + 3));
-
+                            value = line.substring(j, j + 3);
                         } else {
-                            value = Integer.parseInt(line.substring(j, j + 2));
+                            value = line.substring(j, j + 2);
                         }
                     } else {
-                        value = Integer.parseInt(String.valueOf(c));
+                        value = String.valueOf(c);
                     }
 
-                    //is it next to symbol?
-                    boolean isNextToSymbol = isNextToSymbol(lines, j, i, String.valueOf(value));
+                    numberInInputs.add(new NumberInInput(i, j, Integer.parseInt(value)));
 
-                    if(isNextToSymbol) {
-                        result += value;
-                        log.info("adding {} result {}", value, result);
-                    }
-                    j += String.valueOf(value).length();
+                    j += value.length();
                 }
             }
-
         }
 
-        assertEquals(535235, result);
+        //now find *
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i);
+
+            char[] lineAsChars = line.toCharArray();
+
+            for (int j = 0; j < lineAsChars.length; j++) {
+                char c = line.charAt(j);
+                if (c != '*') {
+                    continue;
+                }
+
+                //find adjacent numbers
+                List<NumberInInput> adjacentNumbers = new ArrayList<>();
+                for(NumberInInput numberInInput : numberInInputs) {
+                    if(isNextTo(i, j, numberInInput)) {
+                        adjacentNumbers.add(numberInInput);
+                    }
+                }
+
+                if(adjacentNumbers.size() == 2) {
+                    //got one
+//                    log.info("Got for {} {} {}", i + 1, j, adjacentNumbers);
+                    log.info("Got for line {} position {} {} {}", i + 1, j, adjacentNumbers.get(0).value, adjacentNumbers.get(1).value);
+                    result = result + (adjacentNumbers.get(0).value * adjacentNumbers.get(1).value);
+                } else {
+                    log.info("skip {} {}", i + 1, j);
+                }
+
+            }
+        }
+
+        log.info("result {}", result);
+
+//        assertEquals(535235, result);
     }
 
-    private boolean isNextToSymbol(List<String> lines, int pos, int linenumber, String value) {
-        String currentLine = lines.get(linenumber);
+    private boolean isNextTo(int linenumber, int position, NumberInInput numberInInput) {
+        //short circuit
+        if(numberInInput.lineNumber < linenumber - 1) return false;
+        if(numberInInput.lineNumber > linenumber + 1) return false;
 
-        //next to it?
-        if(pos > 1 && isSymbol( currentLine.charAt(pos - 1) )) return true;
-
-        //in front?
-        if(pos < currentLine.length() - value.length() && isSymbol(currentLine.charAt(pos + value.length()))) return true;
-
-        //below
-        if(linenumber > 1) {
-            if (checkLine(pos, value,lines.get(linenumber - 1))) return true;
-        }
+        int numberLength = String.valueOf(numberInInput.value).length();
+        int numberStart = numberInInput.position;
+        int numberEnd = numberStart + numberLength - 1;
 
         //above
-        if(linenumber < lines.size() -1) {
-            if (checkLine(pos, value, lines.get(linenumber + 1))) return true;
+        if(numberInInput.lineNumber == linenumber - 1) {
+            if(numberStart  <= position + 1 && numberEnd >= position - 1) {
+                return true;
+            }
+        }
+
+        //below
+        if(numberInInput.lineNumber == linenumber + 1) {
+            if(numberStart  <= position + 1 && numberEnd >= position - 1) {
+                return true;
+            }
+        }
+
+        //same line, behind or ahead
+        if(numberInInput.lineNumber == linenumber) {
+            if(numberEnd == position - 1 || numberStart == position + 1) {
+                return true;
+            }
         }
 
         return false;
-    }
-
-    private boolean checkLine(int pos, String value, String line) {
-        //check diagonals
-        if(pos > 1) {
-            if(isSymbol(line.charAt(pos - 1))) return true;
-        }
-        if(pos < line.length() - value.length()) {
-            if(isSymbol(line.charAt(pos + value.length()))) return true;
-        }
-
-        //and directly above/below
-        for(int i = pos; i < pos + value.length(); i++) {
-            if(isSymbol(line.charAt(i))) return true;
-        }
-        return false;
-    }
-
-    private boolean isSymbol(char c) {
-        return !Character.isDigit(c) && c != '.';
     }
 }
