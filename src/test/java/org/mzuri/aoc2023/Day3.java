@@ -88,7 +88,6 @@ public class Day3 extends AdventOfCode2023Test {
 
     private boolean checkLine(int pos, String value, String line) {
         //check diagonals
-
         if(pos > 1) {
             if(isSymbol(line.charAt(pos - 1))) return true;
         }
@@ -96,7 +95,7 @@ public class Day3 extends AdventOfCode2023Test {
             if(isSymbol(line.charAt(pos + value.length()))) return true;
         }
 
-        //and above
+        //and directly above/below
         for(int i = pos; i < pos + value.length(); i++) {
             if(isSymbol(line.charAt(i))) return true;
         }
@@ -106,6 +105,4 @@ public class Day3 extends AdventOfCode2023Test {
     private boolean isSymbol(char c) {
         return !Character.isDigit(c) && c != '.';
     }
-
-
 }
