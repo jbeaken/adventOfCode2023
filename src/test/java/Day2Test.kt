@@ -17,33 +17,30 @@ internal class Day2Test {
         readAllLines.forEach {line ->
 
             //Get id
-            val id = idRegex.find(line)?.groups?.get("id")?.value?.toInt()
+            val id = idRegex.find(line)!!.groups.get("id")!!.value.toInt()
 
-            val isPossible = getIsPossible(line)
-            if(isPossible) {
-                if (id != null) {
-                    result += id
-                }
+            if(isPossible( line )) {
+                result += id
             }
         }
-        println("Added up possible game ids for $result")
+        println("Added up possible game ids to $result")
 
         assert(result == 2776)
     }
 
-    private fun getIsPossible(line: String): Boolean {
+    private fun isPossible(line: String): Boolean {
 
         colourMap.forEach { entry ->
             val regex : Regex = """(?<number>\d{1,2}) ${entry.key}""".toRegex()
             val matchResults = regex.findAll(line)
 
-            val maxValue = matchResults.maxByOrNull {
+            val maxValueMatch = matchResults.maxByOrNull {
                 it.groups["number"]?.value?.toInt() ?: 0
-            }?.groups?.get("number")?.value?.toInt()
-
-            if (maxValue != null) {
-                if (maxValue > entry.value) return false
             }
+
+            val maxValue = maxValueMatch?.groups?.get("number")!!.value.toInt()
+
+            if (maxValue > entry.value) return false
         }
 
         return true
