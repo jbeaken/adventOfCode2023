@@ -9,6 +9,8 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -22,6 +24,8 @@ public class Day3Part1 extends AdventOfCode2023Test {
 
     List<String> lines;
 
+
+
     @BeforeEach
     void beforeEach() throws URISyntaxException, IOException {
         lines = loadInput("day3.txt");
@@ -31,6 +35,7 @@ public class Day3Part1 extends AdventOfCode2023Test {
 
     @Test
     void test() {
+        Pattern pattern = Pattern.compile("\\d{1,3}");
         int result = 0;
 
         for (int i = 0; i < lines.size(); i++) {
@@ -41,29 +46,31 @@ public class Day3Part1 extends AdventOfCode2023Test {
 
             for(int j = 0; j < lineAsChars.length; j++ ) {
                 char c = line.charAt(j);
-                int value;
+
 
                 if (Character.isDigit(c)) {
                     //find full digit
+                    String value;
                     if (Character.isDigit(line.charAt(j + 1))) {
+
                         if (j < lineAsChars.length - 2 && Character.isDigit(line.charAt(j + 2))) {
-                            value = Integer.parseInt(line.substring(j, j + 3));
+                            value = line.substring(j, j + 3);
 
                         } else {
-                            value = Integer.parseInt(line.substring(j, j + 2));
+                            value = line.substring(j, j + 2);
                         }
                     } else {
-                        value = Integer.parseInt(String.valueOf(c));
+                        value = String.valueOf(c);
                     }
 
                     //is it next to symbol?
-                    boolean isNextToSymbol = isNextToSymbol(j, i, String.valueOf(value));
+                    boolean isNextToSymbol = isNextToSymbol(j, i, value);
 
                     if(isNextToSymbol) {
-                        result += value;
+                        result += Integer.parseInt(value);
                         log.info("adding {} result {}", value, result);
                     }
-                    j += String.valueOf(value).length();
+                    j += value.length();
                 }
             }
 
