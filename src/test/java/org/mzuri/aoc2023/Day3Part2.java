@@ -99,7 +99,7 @@ public class Day3Part2 extends AdventOfCode2023Test {
 
         log.info("result {}", result);
 
-//        assertEquals(535235, result);
+        assertEquals(79844424, result);
     }
 
     private boolean isNextTo(int linenumber, int position, NumberInInput numberInInput) {
@@ -111,27 +111,13 @@ public class Day3Part2 extends AdventOfCode2023Test {
         int numberStart = numberInInput.position;
         int numberEnd = numberStart + numberLength - 1;
 
-        //above
-        if(numberInInput.lineNumber == linenumber - 1) {
-            if(numberStart  <= position + 1 && numberEnd >= position - 1) {
-                return true;
-            }
-        }
-
-        //below
-        if(numberInInput.lineNumber == linenumber + 1) {
-            if(numberStart  <= position + 1 && numberEnd >= position - 1) {
-                return true;
-            }
-        }
-
         //same line, behind or ahead
         if(numberInInput.lineNumber == linenumber) {
-            if(numberEnd == position - 1 || numberStart == position + 1) {
-                return true;
-            }
+            return numberEnd == position - 1 || numberStart == position + 1;
         }
 
-        return false;
+        //line above or below
+        return numberStart <= position + 1 && numberEnd >= position - 1;
     }
+
 }
