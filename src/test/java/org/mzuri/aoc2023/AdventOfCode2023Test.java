@@ -7,6 +7,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.List;
 
 @Slf4j
@@ -20,6 +21,8 @@ abstract class AdventOfCode2023Test {
         log.info("Loading input from file {}", absoluteFilename);
 
         URI uri = AdventOfCode2023Test.class.getResource(absoluteFilename).toURI();
-        return Files.readAllLines(Path.of(uri));
+        List<String> lines = Files.readAllLines(Path.of(uri));
+
+        return Collections.unmodifiableList(lines);
     }
 }

@@ -5,9 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -17,10 +15,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * even diagonally, is a "part number" and should be included in your sum. (Periods (.) do not count as a symbol.)
  */
 @Slf4j(topic = "Day3")
-public class Day3 extends AdventOfCode2023Test {
+public class Day3Part2 extends AdventOfCode2023Test {
 
     @Test
-    void test_part1() throws IOException, URISyntaxException {
+    void test() throws IOException, URISyntaxException {
         List<String> lines = loadInput("day3.txt");
 
         int result = 0;
