@@ -12,142 +12,109 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * You play several games and record the information from each game (your puzzle input). Each game is listed with its ID number (like the 11 in Game 11: ...) followed by a semicolon-separated list of subsets of cubes that were revealed from the bag (like 3 red, 5 green, 4 blue).
- * <p>
- * For example, the record of a few games might look like this:
- * <p>
- * Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
- * Game 2: 1 blue, 2 green; 3 green, 4 blue, 1 red; 1 green, 1 blue
- * Game 3: 8 green, 6 blue, 20 red; 5 blue, 4 red, 13 green; 5 green, 1 red
- * Game 4: 1 green, 3 red, 6 blue; 3 green, 6 red; 3 green, 15 blue, 14 red
- * Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green
- * <p>
- * In game 1, three sets of cubes are revealed from the bag (and then put back again). The first set is 3 blue cubes and 4 red cubes; the second set is 1 red cube, 2 green cubes, and 6 blue cubes; the third set is only 2 green cubes.
- * <p>
- * The Elf would first like to know which games would have been possible if the bag contained only 12 red cubes, 13 green cubes, and 14 blue cubes?
- * <p>
- * In the example above, games 1, 2, and 5 would have been possible if the bag had been loaded with that configuration. However, game 3 would have been impossible because at one point the Elf showed you 20 red cubes at once; similarly, game 4 would also have been impossible because the Elf showed you 15 blue cubes at once. If you add up the IDs of the games that would have been possible, you get 8.
- * <p>
- * Determine which games would have been possible if the bag had been loaded with only 12 red cubes, 13 green cubes, and 14 blue cubes. What is the sum of the IDs of those games?
+ * The engine schematic (your puzzle input) consists of a visual representation of the engine.
+ * There are lots of numbers and symbols you don't really understand, but apparently any number adjacent to a symbol,
+ * even diagonally, is a "part number" and should be included in your sum. (Periods (.) do not count as a symbol.)
  */
 @Slf4j(topic = "Day3")
 public class Day3 extends AdventOfCode2023Test {
 
-    record Game(Integer id, Boolean isPossible) {
-    }
-
-    record ColourConfig(Integer skipLength, Integer maxCubesAllowed) {
-    }
-
-    Map<Character, ColourConfig> colourMap = Map.of(
-            'r', new ColourConfig(5, 12),
-            'g', new ColourConfig(7, 13),
-            'b', new ColourConfig(6, 14));
-
-    @Test
-    void test_part2() throws IOException, URISyntaxException {
-        List<String> lines = loadInput("day2.txt");
-
-        int result = 0;
-
-        for (String line : lines) {
-            Map<Character, Integer> minimumCubeGameFromLine = getMinimumCubeGameFromLine(line);
-            Integer cube = minimumCubeGameFromLine.values().stream().reduce(1, (a, b) -> a * b);
-            result += cube;
-        }
-
-        log.info("Result {}", result);
-
-        assertEquals(result, 68638);
-    }
-
-
     @Test
     void test_part1() throws IOException, URISyntaxException {
-        List<String> lines = loadInput("day2.txt");
+        List<String> lines = loadInput("day3.txt");
 
         int result = 0;
 
-        for (String line : lines) {
-            Game game = getGameFromLine(line);
-            if (game.isPossible) {
-                log.info(game.id.toString());
-                result += game.id;
-            }
-        }
+        for (int i = 0; i < lines.size(); i++) {
+            String line = lines.get(i);
+            log.info(line);
 
-        log.info("Result {}", result);
+            char[] lineAsChars = line.toCharArray();
 
-        assertEquals(result, 2776);
-    }
+            for(int j = 0; j < lineAsChars.length; j++ ) {
+                char c = line.charAt(j);
+                int value = 0;
 
-    private Map<Character, Integer> getMinimumCubeGameFromLine(String line) {
-        int start = line.indexOf(":");
+                if (Character.isDigit(c)) {
+                    //find full digit
+                    if (Character.isDigit(line.charAt(j + 1))) {
+                        if (j < lineAsChars.length - 2 && Character.isDigit(line.charAt(j + 2))) {
+                            value = Integer.parseInt(line.substring(j, j + 3));
 
-        String turns = line.substring(start + 2);
+                        } else {
+                            value = Integer.parseInt(line.substring(j, j + 2));
+                        }
+                    } else {
+                        value = Integer.parseInt(String.valueOf(c));
+                    }
 
-        //build colourAndMinimumAmountOfCubesMap
-        Map<Character, Integer> immutableMap = Map.of('r', 0, 'g', 0, 'b', 0);
-        Map<Character, Integer> colourAndMinimumAmountOfCubesMap = new HashMap<>(immutableMap);
+                    //is it next to symbol?
+                    boolean isNextToSymbol = isNextToSymbol(lines, j, i, String.valueOf(value));
 
-        for (int i = 0; i < turns.length(); i++) {
-            char c = turns.charAt(i);
-
-            if (colourMap.containsKey(c)) {
-
-                int amountOfCubes;
-
-                amountOfCubes = getAmountOfCubes(i, turns);
-
-                Integer minAmountOfCubes = colourAndMinimumAmountOfCubesMap.get(c);
-
-                if (amountOfCubes > minAmountOfCubes) {
-                    colourAndMinimumAmountOfCubesMap.put(c, amountOfCubes);
+                    if(isNextToSymbol) {
+                        result += value;
+                        log.info("adding {} result {}", value, result);
+                    }
+                    j += String.valueOf(value).length();
                 }
+            }
 
-                ColourConfig colourConfig = colourMap.get(c);
-                i += colourConfig.skipLength;
+        }
+
+        assertEquals(404915, result);
+    }
+
+    private boolean isNextToSymbol(List<String> lines, int pos, int linenumber, String value) {
+        String currentLine = lines.get(linenumber);
+        //next to it?
+        if(pos > 1 && isSymbol( currentLine.charAt(pos - 1) )) return true;
+
+        //in front?
+        if(pos < currentLine.length() - value.length() && isSymbol(currentLine.charAt(pos + value.length()))) return true;
+
+
+        if(linenumber > 1) {
+
+
+            //check diagonals
+            String lineAbove = lines.get(linenumber - 1);
+            if(pos > 1) {
+                if(isSymbol(lineAbove.charAt(pos - 1))) return true;
+            }
+            if(pos < currentLine.length() - value.length()) {
+                if(isSymbol(lineAbove.charAt(pos + value.length()))) return true;
+            }
+
+            //and above
+            for(int i = pos; i < pos + value.length(); i++) {
+                if(isSymbol(lineAbove.charAt(i))) return true;
             }
         }
 
-        return colourAndMinimumAmountOfCubesMap;
-    }
+        if(linenumber < lines.size() -1) {
 
-    private static int getAmountOfCubes(int i, String turns) {
-        if (i > 2 && Character.isDigit(turns.charAt(i - 3))) {
-            return Integer.parseInt(turns.substring(i - 3, i - 1));
-        } else {
-            return Integer.parseInt(turns.substring(i - 2, i - 1));
-        }
-    }
+            String lineBelow = lines.get(linenumber + 1);
 
-    private Game getGameFromLine(String line) {
-        //get id, between first space and :
-        int startId = line.indexOf(" ");
-        int endId = line.indexOf(":");
-        Integer id = Integer.valueOf(line.substring(startId + 1, endId));
+            //check diagonals
+            if(pos > 1) {
+                if(isSymbol(lineBelow.charAt(pos - 1))) return true;
+            }
+            if(pos < currentLine.length() - value.length()) {
+                if(isSymbol(lineBelow.charAt(pos + value.length()))) return true;
+            }
 
-        String turns = line.substring(endId + 2);
-
-        for (int i = 0; i < turns.length(); i++) {
-            char c = turns.charAt(i);
-
-            if (colourMap.containsKey(c)) {
-
-                int amountOfCubes = getAmountOfCubes(i, turns);
-
-                ColourConfig colourConfig = colourMap.get(c);
-
-                if (amountOfCubes > colourConfig.maxCubesAllowed) {
-                    return new Game(id, false);
-                }
-
-                i += colourConfig.skipLength;
-
+            //and below
+            for(int i = pos; i < pos + value.length(); i++) {
+                if(isSymbol(lineBelow.charAt(i))) return true;
             }
         }
 
-        return new Game(id, true);
+        return false;
     }
+
+    private boolean isSymbol(char c) {
+        return !Character.isDigit(c) && c != '.';
+    }
+
 
 }
