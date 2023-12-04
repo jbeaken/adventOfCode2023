@@ -26,8 +26,7 @@ public class Day3Part2 extends AdventOfCode2023Test {
         lines = loadInput("day3.txt");
     }
 
-    record NumberInInput(Integer lineNumber, Integer position, Integer value) {
-    }
+    record NumberInInput(Integer lineNumber, Integer position, Integer value) {}
 
     @Test
     void test()  {
@@ -86,14 +85,11 @@ public class Day3Part2 extends AdventOfCode2023Test {
                 }
 
                 if(adjacentNumbers.size() == 2) {
-                    //got one
-//                    log.info("Got for {} {} {}", i + 1, j, adjacentNumbers);
-                    log.info("Got for line {} position {} {} {}", i + 1, j, adjacentNumbers.get(0).value, adjacentNumbers.get(1).value);
+                    log.debug("Got for line {} position {} {} {}", i + 1, j, adjacentNumbers.get(0).value, adjacentNumbers.get(1).value);
                     result = result + (adjacentNumbers.get(0).value * adjacentNumbers.get(1).value);
                 } else {
-                    log.info("skip {} {}", i + 1, j);
+                    log.debug("skip {} {}", i + 1, j);
                 }
-
             }
         }
 
