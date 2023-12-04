@@ -1,5 +1,6 @@
 package org.mzuri.aoc2023;
 
+import kotlin.ranges.IntRange;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
@@ -44,13 +45,13 @@ public class Day4Part1 extends AdventOfCode2023Test {
             //my numbers
             String myNumbersText = card.substring(card.indexOf("|") + 2);
             List<Integer> myNumbers = extractNumbers(myNumbersText);
-
+            double pow = Math.pow(2, 0);  //todo
             Integer cardResult = myNumbers.stream().filter(winningNumbers::contains).reduce(0, timesByTwoUnlessZeroThenSetToOne());
-//            Integer cardResult = myNumbers.stream().filter(winningNumbers::contains).reduce(0, (a, b) -> (int)Math.pow(b, 2));
+            long noOfWinningNumbers = myNumbers.stream().filter(winningNumbers::contains).count();
 
             result += cardResult;
 
-            log.debug("card {} : {}", i, cardResult);
+            log.debug("card {} : {} {}", i, cardResult, noOfWinningNumbers);
         }
 
         log.info("result {}", result);
