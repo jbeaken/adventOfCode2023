@@ -27,9 +27,7 @@ public class Day4Part1 extends AdventOfCode2023Test {
 
     List<String> cards;
 
-    record Card(Integer gameId, List<Integer> winningNumbers,  List<Integer> cardNumbers){
-
-    }
+    record Card(Integer gameId, List<Integer> winningNumbers,  List<Integer> cardNumbers) {}
 
     @BeforeEach
     void beforeEach() throws URISyntaxException, IOException {
