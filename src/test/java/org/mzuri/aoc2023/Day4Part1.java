@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BinaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,8 +45,8 @@ public class Day4Part1 extends AdventOfCode2023Test {
             String myNumbersText = card.substring(card.indexOf("|") + 2);
             List<Integer> myNumbers = extractNumbers(myNumbersText);
 
-            Integer cardResult = myNumbers.stream().filter(winningNumbers::contains).reduce(0, (a, b) -> a == 0 ? 2 : a * 2);
-            List<Integer> list = myNumbers.stream().filter(winningNumbers::contains).toList();
+            Integer cardResult = myNumbers.stream().filter(winningNumbers::contains).reduce(0, timesByTwoUnlessZeroThenSetToOne());
+//            Integer cardResult = myNumbers.stream().filter(winningNumbers::contains).reduce(0, (a, b) -> (int)Math.pow(b, 2));
 
             result += cardResult;
 
@@ -53,6 +54,13 @@ public class Day4Part1 extends AdventOfCode2023Test {
         }
 
         log.info("result {}", result);
+
+        assertEquals(22674, result);
+    }
+
+    @NotNull
+    private static BinaryOperator<Integer> timesByTwoUnlessZeroThenSetToOne() {
+        return (a, b) -> a == 0 ? 1 : a * 2;
     }
 
     @NotNull
