@@ -1,6 +1,7 @@
 package org.mzuri.aoc2023;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -32,31 +33,39 @@ public class Day4Part1 extends AdventOfCode2023Test {
     void test() {
         int result = 0;
 
-        Pattern numberPattern = Pattern.compile("\\d{1,2}");
-
         for (int i = 0; i < cards.size(); i++) {
             String card = cards.get(i);
 
             //winning numbers
             String winningNumbersText = card.substring(card.indexOf(":") + 2, card.indexOf("|") - 1);
-            Matcher winningNumbersMatcher = numberPattern.matcher(winningNumbersText);
-            List<Integer> winningNumbers = new ArrayList<>();
-            while (winningNumbersMatcher.find()) {
-                winningNumbers.add(Integer.parseInt(winningNumbersMatcher.group()));
-            }
+            List<Integer> winningNumbers = extractNumbers(winningNumbersText);
 
             //my numbers
-            String myNumbersText = card.substring(card.indexOf("|"));
-            Matcher muNumbersMatcher = numberPattern.matcher(myNumbersText);
-            muNumbersMatcher.find();
-            List<Integer> myNumbers = new ArrayList<>();
-            while (muNumbersMatcher.find()) {
-                winningNumbers.add(Integer.parseInt(muNumbersMatcher.group()));
-            }
+            String myNumbersText = card.substring(card.indexOf("|") + 2);
+            List<Integer> myNumbers = extractNumbers(myNumbersText);
 
-            myNumbers.stream().filter(winningNumbers::contains).reduce(1, (a, b) -> a * 2).v;
+            Integer cardResult = myNumbers.stream().filter(winningNumbers::contains).reduce(0, (a, b) -> a == 0 ? 2 : a * 2);
+            List<Integer> list = myNumbers.stream().filter(winningNumbers::contains).toList();
 
+            result += cardResult;
 
+            log.debug("card {} : {}", i, cardResult);
         }
+
+        log.info("result {}", result);
+    }
+
+    @NotNull
+    private static List<Integer> extractNumbers(String text) {
+        Pattern numberPattern = Pattern.compile("\\d{1,2}");
+        Matcher numbersMatcher = numberPattern.matcher(text);
+
+        List<Integer> numbers = new ArrayList<>();
+
+        while (numbersMatcher.find()) {
+            numbers.add(Integer.parseInt(numbersMatcher.group()));
+        }
+
+        return numbers;
     }
 }
