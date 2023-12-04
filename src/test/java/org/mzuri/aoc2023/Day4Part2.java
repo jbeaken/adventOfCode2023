@@ -31,7 +31,6 @@ public class Day4Part2 extends AdventOfCode2023Test {
 
     }
 
-
     @Test
     void test() throws URISyntaxException, IOException {
         List<String> lines = loadInput("day4.txt");
@@ -70,6 +69,12 @@ public class Day4Part2 extends AdventOfCode2023Test {
     }
 
     private Card getCardFromLine(String line) {
+        //Get card number
+        Pattern cardNumberPattern = Pattern.compile("//d{1,3}:");
+        Matcher matcher = cardNumberPattern.matcher(line);
+        matcher.find();
+        String group = matcher.group();
+
         //winning numbers
         String winningNumbersText = line.substring(line.indexOf(":") + 2, line.indexOf("|") - 1);
         List<Integer> winningNumbers = extractNumbers(winningNumbersText);

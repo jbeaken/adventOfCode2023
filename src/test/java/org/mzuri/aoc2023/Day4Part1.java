@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.function.BinaryOperator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -26,38 +27,25 @@ public class Day4Part1 extends AdventOfCode2023Test {
 
     List<String> cards;
 
+    record Card(Integer gameId, List<Integer> winningNumbers,  List<Integer> cardNumbers){
+
+    }
+
     @BeforeEach
     void beforeEach() throws URISyntaxException, IOException {
         cards = loadInput("day4.txt");
     }
 
     @Test
-    void test() {
-        int result = 0;
-
-        for (int i = 0; i < cards.size(); i++) {
-            String card = cards.get(i);
-
-            //winning numbers
-            String winningNumbersText = card.substring(card.indexOf(":") + 2, card.indexOf("|") - 1);
-            List<Integer> winningNumbers = extractNumbers(winningNumbersText);
-
-            //my numbers
-            String myNumbersText = card.substring(card.indexOf("|") + 2);
-            List<Integer> myNumbers = extractNumbers(myNumbersText);
-            double pow = Math.pow(2, 0);  //todo
-            Integer cardResult = myNumbers.stream().filter(winningNumbers::contains).reduce(0, timesByTwoUnlessZeroThenSetToOne());
-            long noOfWinningNumbers = myNumbers.stream().filter(winningNumbers::contains).count();
-
-            result += cardResult;
-
-            log.debug("card {} : {} {}", i, cardResult, noOfWinningNumbers);
-        }
-
-        log.info("result {}", result);
+    void test() throws URISyntaxException, IOException {
+        long result = cards.stream().map(this::getCardFromLine)
+                .map(card -> card.cardNumbers().stream().filter(card.winningNumbers::contains).reduce(0, timesByTwoUnlessZeroThenSetToOne()))
+                .mapToInt(Integer::intValue)
+                .sum();
 
         assertEquals(22674, result);
     }
+
 
     @NotNull
     private static BinaryOperator<Integer> timesByTwoUnlessZeroThenSetToOne() {
@@ -76,5 +64,23 @@ public class Day4Part1 extends AdventOfCode2023Test {
         }
 
         return numbers;
+    }
+
+    private Card getCardFromLine(String line) {
+        //Get card number
+        Pattern cardNumberPattern = Pattern.compile("\\d{1,3}");
+        Matcher matcher = cardNumberPattern.matcher(line);
+        matcher.find();
+        String id = matcher.group();
+
+        //winning numbers
+        String winningNumbersText = line.substring(line.indexOf(":") + 2, line.indexOf("|") - 1);
+        List<Integer> winningNumbers = extractNumbers(winningNumbersText);
+
+        //my numbers
+        String cardNumbersText = line.substring(line.indexOf("|") + 2);
+        List<Integer> cardNumbers = extractNumbers(cardNumbersText);
+
+        return new Card(Integer.parseInt(id), winningNumbers, cardNumbers);
     }
 }
