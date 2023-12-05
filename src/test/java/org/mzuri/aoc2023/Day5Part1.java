@@ -18,18 +18,18 @@ import java.util.*;
 @Slf4j(topic = "Day5")
 public class Day5Part1 extends AdventOfCode2023Test {
 
-    record AlmanacRange(Integer destinationStart, Integer sourceStart, Integer range) {}
+    record AlmanacRange(Long destinationStart, Long sourceStart, Long range) {}
 
     @Test
     void test() throws URISyntaxException, IOException {
         List<String> lines = loadInput("day5.txt");
         List<List<AlmanacRange>> almanacRangeList = new ArrayList<>();
 
-        int result = Integer.MAX_VALUE;
+        long result = Long.MAX_VALUE;
 
-        List<Integer> seeds = Arrays.stream(lines.get(0).split(": ")[1].split(" "))
+        List<Long> seeds = Arrays.stream(lines.get(0).split(": ")[1].split(" "))
                 .map(String::trim)
-                .map(Integer::parseInt).toList();
+                .map(Long::parseLong).toList();
 
         int mapCount = 0;
         List<AlmanacRange> currentList = new ArrayList<>();
@@ -42,7 +42,7 @@ public class Day5Part1 extends AdventOfCode2023Test {
                 i++;
                 continue;
             }
-            List<Integer> almanacSource = Arrays.stream(line.split(" ")).map(String::trim).map(Integer::parseInt).toList();
+            List<Long> almanacSource = Arrays.stream(line.split(" ")).map(String::trim).map(Long::parseLong).toList();
             AlmanacRange almanacRange = new AlmanacRange(almanacSource.get(0), almanacSource.get(1), almanacSource.get(2));
             currentList.add(almanacRange);
         }
@@ -52,7 +52,7 @@ public class Day5Part1 extends AdventOfCode2023Test {
 
         //go thorough seeds
         for (int i = 0; i < seeds.size(); i++) {
-            Integer seed = seeds.get(i);
+            Long seed = seeds.get(i);
             for (int j = 0; j < almanacRangeList.size(); j++) {
                 //is in range?
                 List<AlmanacRange> almanacRanges = almanacRangeList.get(j);
