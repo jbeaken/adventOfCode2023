@@ -27,7 +27,8 @@ public class Day4Part1 extends AdventOfCode2023Test {
 
     List<String> cards;
 
-    record Card(Integer gameId, List<Integer> winningNumbers,  List<Integer> cardNumbers) {}
+    record Card(Integer gameId, List<Integer> winningNumbers, List<Integer> cardNumbers) {
+    }
 
     @BeforeEach
     void beforeEach() throws URISyntaxException, IOException {
@@ -37,18 +38,15 @@ public class Day4Part1 extends AdventOfCode2023Test {
     @Test
     void test() throws URISyntaxException, IOException {
         long result = cards.stream().map(this::getCardFromLine)
-                .map(card -> card.cardNumbers().stream().filter(card.winningNumbers::contains).reduce(0, timesByTwoUnlessZeroThenSetToOne()))
+                .map(card -> card.cardNumbers().stream()
+                        .filter(card.winningNumbers::contains)
+                        .reduce(0, (a, b) -> a == 0 ? 1 : a * 2))
                 .mapToInt(Integer::intValue)
                 .sum();
 
         assertEquals(22674, result);
     }
 
-
-    @NotNull
-    private static BinaryOperator<Integer> timesByTwoUnlessZeroThenSetToOne() {
-        return (a, b) -> a == 0 ? 1 : a * 2;
-    }
 
     @NotNull
     private static List<Integer> extractNumbers(String text) {
