@@ -37,9 +37,10 @@ public class Day5Part2 extends AdventOfCode2023Test {
 
         for (int i = 0; i < seedRangeList.size(); i+= 2) {
             Long startInclusive = seedRangeList.get(i);
-            long endInclusive = startInclusive + seedRangeList.get(i + 1) + 1;
+            long endInclusive = startInclusive + seedRangeList.get(i + 1);
 
             OptionalLong min = LongStream.range(startInclusive, endInclusive).map(seedValue -> {
+                log.info("seedValue {}", seedValue);
                 for (int j = 0; j < almanacRangeList.size(); j++) {
                     //is in range?
                     List<AlmanacRange> almanacRanges = almanacRangeList.get(j);
