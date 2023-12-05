@@ -1,11 +1,13 @@
 package org.mzuri.aoc2023;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.stream.LongStream;
 
 /**
 
@@ -23,32 +25,23 @@ public class Day5Part1 extends AdventOfCode2023Test {
     @Test
     void test() throws URISyntaxException, IOException {
         List<String> lines = loadInput("day5.txt");
-        List<List<AlmanacRange>> almanacRangeList = new ArrayList<>();
+
 
         long result = Long.MAX_VALUE;
 
-        List<Long> seeds = Arrays.stream(lines.get(0).split(": ")[1].split(" "))
+        List<Long> seedRangeList = Arrays.stream(lines.get(0).split(": ")[1].split(" "))
                 .map(String::trim)
                 .map(Long::parseLong).toList();
 
-        int mapCount = 0;
-        List<AlmanacRange> currentList = new ArrayList<>();
-        for (int i = 3; i < lines.size(); i++) {
-            String line = lines.get(i);
-            if(line.isEmpty()) {
-                almanacRangeList.add(currentList);
-                currentList = new ArrayList<>();
-                mapCount++;
-                i++;
-                continue;
-            }
-            List<Long> almanacSource = Arrays.stream(line.split(" ")).map(String::trim).map(Long::parseLong).toList();
-            AlmanacRange almanacRange = new AlmanacRange(almanacSource.get(0), almanacSource.get(1), almanacSource.get(2));
-            currentList.add(almanacRange);
-        }
-        //last one
-        almanacRangeList.add(currentList);
+        List<List<AlmanacRange>> almanacRangeList = getAlmanacRangeList(lines);
 
+        List<Long> seeds = new ArrayList<>();
+        for (int i = 0; i < seedRangeList.size(); i+= 2) {
+            Long startInclusive = seedRangeList.get(i);
+            long endInclusive = startInclusive + seedRangeList.get(i + 1);
+            List<Long> newSeeds = LongStream.range(startInclusive, endInclusive).boxed().toList();
+            seeds.addAll(newSeeds);
+        }
 
         //go thorough seeds
         for (int i = 0; i < seeds.size(); i++) {
@@ -64,14 +57,36 @@ public class Day5Part1 extends AdventOfCode2023Test {
                         break;
                     }
                 }
-                log.info("j {} seed {}", j, seed);
+//                log.info("j {} seed {}", j, seed);
             }
-            log.info("i {} seed {}", i, seed);
-            log.info("");
+//            log.info("i {} seed {}", i, seed);
+//            log.info("");
             result = Math.min(result, seed);
         }
+
         //Seed 14, soil 14, fertilizer 53, water 49, light 42, temperature 42, humidity 43, location 43.
         log.info("result : {}", result);
 
+    }
+
+    @NotNull
+    private static List<List<AlmanacRange>> getAlmanacRangeList(List<String> lines) {
+        List<List<AlmanacRange>> almanacRangeList = new ArrayList<>();
+        List<AlmanacRange> currentList = new ArrayList<>();
+        for (int i = 3; i < lines.size(); i++) {
+            String line = lines.get(i);
+            if(line.isEmpty()) {
+                almanacRangeList.add(currentList);
+                currentList = new ArrayList<>();
+                i++;
+                continue;
+            }
+            List<Long> almanacSource = Arrays.stream(line.split(" ")).map(String::trim).map(Long::parseLong).toList();
+            AlmanacRange almanacRange = new AlmanacRange(almanacSource.get(0), almanacSource.get(1), almanacSource.get(2));
+            currentList.add(almanacRange);
+        }
+        //last one
+        almanacRangeList.add(currentList);
+        return almanacRangeList;
     }
 }
