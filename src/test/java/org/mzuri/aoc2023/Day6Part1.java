@@ -26,7 +26,7 @@ public class Day6Part1 extends AdventOfCode2023Test {
         List<String> lines = loadInput("day6.txt");
         int result = 1;
 
-        Pattern pattern = Pattern.compile("\\d{1,3}");
+        Pattern pattern = Pattern.compile("\\d{1,4}");
         Matcher timeMatcher = pattern.matcher(lines.get(0));
         Matcher distanceMatcher = pattern.matcher(lines.get(1));
 
@@ -40,6 +40,7 @@ public class Day6Part1 extends AdventOfCode2023Test {
 
         //cycle through races, getting number of ways to beat record
         for (Race race : raceList) {
+            log.debug("race {}", race);
             int noOfWaysToWin = 0;
             for (int milisecondsPressed = 1; milisecondsPressed < race.time; milisecondsPressed++) {
                 if(milisecondsPressed * (race.time - milisecondsPressed) > race.distance) {
@@ -48,6 +49,7 @@ public class Day6Part1 extends AdventOfCode2023Test {
                 }
             }
             result *= noOfWaysToWin;
+            log.info("{oOfWaysToWin {}", noOfWaysToWin);
         }
 
         Assertions.assertEquals(288, result);
