@@ -17,13 +17,15 @@ public class Day7Part1 extends AdventOfCode2023Test {
 
     record Hand(Integer bid, String cards, Map<Integer, Long> result){}
 
+    Map<Character,  Integer> cardRankings = Map.of('A', 14, 'K', 13, 'Q', 12, 'J', 11, 'T', 10);
+
     enum Rank {
-        FOUR_OF_A_KIND(4),
-        FULL_HOUSE(3), TWO_PAIR(1),
-        ONE_PAIR(0),
-        HIGH_CARD(-1),
-        FIVE_OF_A_KIND(5),
-        THREE_OF_A_KIND(2);
+        FOUR_OF_A_KIND(5),
+        FULL_HOUSE(4), TWO_PAIR(2),
+        ONE_PAIR(1),
+        HIGH_CARD(0),
+        FIVE_OF_A_KIND(6),
+        THREE_OF_A_KIND(3);
 
         private final int score;
 
@@ -39,16 +41,31 @@ public class Day7Part1 extends AdventOfCode2023Test {
 
         List<Hand> handList = lines.stream().map(this::getHand).sorted(this::sortHands).toList();
 
+        for (int i = 0; i < handList.size(); i++) {
+            result += handList.get(i).bid() * (i + 1);
+        }
+
         Assertions.assertEquals(288, result);
     }
 
     private int sortHands(Hand thiz, Hand that) {
         Rank rankThiz = getRank(thiz);
         Rank rankThat = getRank(that);
-        int result = rankThat.score - rankThiz.score;
+        int result = rankThiz.score - rankThat.score;
 
-        if(result == 0) {
-            return thiz.cards.charAt(0) > that.cards.charAt(0) ? 1 : -1;
+        if(result != 0) {
+            return result;
+        }
+        int pos = 0;
+        while(result == 0) {
+            pos++;
+            Integer thizFirstCardScore = cardRankings.get(thiz.cards.charAt(pos));
+            Integer thatFirstCardScore =  cardRankings.get(that.cards.charAt(pos));
+
+            if(thizFirstCardScore == null) thizFirstCardScore = Integer.parseInt("" + thiz.cards.charAt(pos));
+            if(thatFirstCardScore == null) thatFirstCardScore = Integer.parseInt("" + that.cards.charAt(pos));
+
+            result = thizFirstCardScore - thatFirstCardScore;
         }
 
         return result;
